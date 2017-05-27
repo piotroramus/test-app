@@ -15,8 +15,13 @@ val logging = Seq(
   "org.slf4j" % "slf4j-api" % "1.7.21"
 )
 
+val tests = Seq(
+  "org.scalactic" %% "scalactic" % "3.0.1",
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+)
+
 val other = Seq(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.6"
 )
 
-libraryDependencies ++= akka ++ logging ++ other
+libraryDependencies ++= akka ++ logging ++ tests ++ other
