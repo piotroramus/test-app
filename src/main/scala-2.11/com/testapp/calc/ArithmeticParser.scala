@@ -1,3 +1,4 @@
+package com.testapp.calc
 
 import scala.util.parsing.combinator.JavaTokenParsers
 
