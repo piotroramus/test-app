@@ -1,18 +1,28 @@
 package com.testapp.calc
 
+
+import akka.actor.ActorSystem
+import akka.pattern.ask
+import akka.util.Timeout
+import com.testapp.calc.EvaluationActor.{GetResult, Response}
+
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Random
 
-class CalcService {
+case class ValidationException(msg: String) extends Exception(msg)
 
+class CalcService(implicit system: ActorSystem) {
 
+  implicit val timeout = Timeout(3 seconds)
+
+  val parser = new ArithmeticParser()
   def calculateExpression(expression: String)(implicit ec: ExecutionContext): Future[Double] =
-  // for the time being simulate the calculations
-    Future[Double] {
-      // simulate parsing exception
-      if (Random.nextBoolean())
-        throw new Exception("OMG, FAIL!")
-      2.0
+
+    parser.parse(expression) match {
+      case Some(expr) =>
+        val evaluationActor = system.actorOf(EvaluationActor.props(expr))
+        (evaluationActor ? GetResult).mapTo[Response].map(_.n)
+      case None => Future.failed(ValidationException(s"Failed to validate expression: $expression"))
     }
 
 }

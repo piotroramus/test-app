@@ -50,32 +50,8 @@ class ArithmeticParser extends JavaTokenParsers {
 
   lazy val factor: Parser[Expression] = "(" ~> expr <~ ")" | floatingPointNumber ^^ { d => Num(d.toDouble) }
 
-  def parse(expression: String): ParseResult[Expression] = parseAll(expr, expression)
-}
-
-class Calc {
-  def evaluate(e: Expression): Double =
-    e match {
-      case Add(e1: Expression, e2: Expression) => evaluate(e1) + evaluate(e2)
-      case Sub(e1: Expression, e2: Expression) => evaluate(e1) - evaluate(e2)
-      case Mul(e1: Expression, e2: Expression) => evaluate(e1) * evaluate(e2)
-      case Div(e1: Expression, e2: Expression) => evaluate(e1) / evaluate(e2)
-      case Num(d: Double) => d
-    }
-}
-
-object ParseExpr extends ArithmeticParser {
-
-  def main(args: Array[String]) {
-    val calc = new Calc()
-    val expression = "1+(1-2)*3"
-
-    parse(expression) match {
-      case Success(matched, _) =>
-        println(matched)
-        println(calc.evaluate(matched))
-      case Failure(msg, _) => println("FAILURE: " + msg)
-      case Error(msg, _) => println("ERROR: " + msg)
-    }
+  def parse(expression: String): Option[Expression] = parseAll(expr, expression) match {
+    case Success(matched, _) => Some(matched)
+    case _ => None
   }
 }

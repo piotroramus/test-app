@@ -23,8 +23,8 @@ trait CalcRunner extends StrictLogging {
   val port: Int = Settings.port
 
   val service = new CalcService()
-  val calcController = new CalcController(service)
-  val routes: Route = calcController.routes
+  val controller = new CalcController(service)
+  val routes: Route = controller.routes
 
   def run(): Unit = {
 
