@@ -3,15 +3,20 @@ package com.testapp.calc
 import scala.util.parsing.combinator.JavaTokenParsers
 
 
-sealed abstract class Expression
+sealed trait Operation
 
-case class Add(e1: Expression, e2: Expression) extends Expression
+case object Add extends Operation
 
-case class Sub(e1: Expression, e2: Expression) extends Expression
+case object Sub extends Operation
 
-case class Mul(e1: Expression, e2: Expression) extends Expression
+case object Mul extends Operation
 
-case class Div(e1: Expression, e2: Expression) extends Expression
+case object Div extends Operation
+
+
+sealed trait Expression
+
+case class BinaryOperator(operation: Operation, left: Expression, right: Expression) extends Expression
 
 case class Num(d: Double) extends Expression
 
@@ -36,15 +41,15 @@ class ArithmeticParser extends JavaTokenParsers {
   lazy val expr: Parser[Expression] = term ~ rep("+" ~ term | "-" ~ term) ^^ {
     case left ~ right =>
       right.foldLeft(left) {
-        case (e1, "+" ~ e2) => Add(e1, e2)
-        case (e1, "-" ~ e2) => Sub(e1, e2)
+        case (e1, "+" ~ e2) => BinaryOperator(Add, e1, e2)
+        case (e1, "-" ~ e2) => BinaryOperator(Sub, e1, e2)
       }
   }
 
   lazy val term: Parser[Expression] = factor ~ rep("*" ~ factor | "/" ~ factor) ^^ {
     case left ~ right => right.foldLeft(left) {
-      case (e1, "*" ~ e2) => Mul(e1, e2)
-      case (e1, "/" ~ e2) => Div(e1, e2)
+      case (e1, "*" ~ e2) => BinaryOperator(Mul, e1, e2)
+      case (e1, "/" ~ e2) => BinaryOperator(Div, e1, e2)
     }
   }
 
