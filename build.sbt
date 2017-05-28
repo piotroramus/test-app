@@ -6,7 +6,8 @@ scalaVersion := "2.11.7"
 
 val akka = Seq(
   "com.typesafe.akka" %% "akka-http" % "10.0.5",
-  "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.4"
+  "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.4",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.0.7"
 )
 
 val logging = Seq(
