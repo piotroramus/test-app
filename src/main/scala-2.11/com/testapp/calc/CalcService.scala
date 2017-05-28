@@ -21,7 +21,10 @@ class CalcService(implicit system: ActorSystem) {
     parser.parse(expression) match {
       case Some(expr) =>
         val evaluationActor = system.actorOf(EvaluationActor.props(expr))
-        (evaluationActor ? GetResult).mapTo[Response].map(_.n)
+        (evaluationActor ? GetResult).mapTo[Response].map{ resp =>
+            system.stop(evaluationActor)
+            resp.n
+        }
       case None => Future.failed(ValidationException(s"Failed to validate expression: $expression"))
     }
 
